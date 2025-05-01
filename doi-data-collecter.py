@@ -43,11 +43,12 @@ dois = df.iloc[:, 0].tolist()
 
 doi_info = []
 
-coounter = 0
+counter = 0
+fail = 0
 
 for doi in dois:
     
-    print(f'{coounter+1}. Processing DOI: {doi}')
+    print(f'{counter+1}. Processing DOI: {doi}')
     # Replace '/' with '%2F' in the DOI for the API request
     posts = get_posts(doi)
 
@@ -55,11 +56,13 @@ for doi in dois:
         doi_info.append(posts)
     else:
         print(f'Failed to retrieve posts for DOI: {doi}')
+        fail += 1
+
 
     #In case you want to limit the number of DOIs processed
-    coounter += 1
+    counter += 1
     """
-    if coounter == 30:
+    if counter == 30:
         break
     """
 
@@ -67,6 +70,9 @@ for doi in dois:
 save_to_file(doi_info, 'doi_data.json')
 print('Data collection complete. DOI data saved to doi_data.json.')
 
+print(f'Total DOIs processed: {counter}')  
+print(f'Total DOIs failed: {fail}')
+print(f'Failure rate: {fail/counter*100:.2f}%')
 
 #Create a world cloud from the collected data
 from wordcloud import WordCloud, STOPWORDS
