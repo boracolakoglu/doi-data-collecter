@@ -1,6 +1,7 @@
-test*
+test.py
 *.png
-.json
+doi_data.json
+*.json
 *.jpg
 *.jpeg
 *.csv

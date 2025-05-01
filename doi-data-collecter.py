@@ -3,6 +3,10 @@ import json
 
 def get_posts(doi):
     try:
+        if not isinstance(doi, str) or doi == '':
+            print(f"Invalid DOI format: {doi}")
+            raise ValueError("DOI is not a string")
+        
         doi = doi.replace('/', '%2F')
         url = f'https://api.crossref.org/works/{doi}'
         
@@ -20,6 +24,9 @@ def get_posts(doi):
         return None
     except AttributeError as e:
         print('Attribute error:', e)
+        return None
+    except ValueError as e:
+        print('Value error:', e)
         return None
 
 def save_to_file(data, filename):
@@ -42,7 +49,6 @@ for doi in dois:
     
     print(f'{coounter+1}. Processing DOI: {doi}')
     # Replace '/' with '%2F' in the DOI for the API request
-    doi = doi.replace('/', '%2F')
     posts = get_posts(doi)
 
     if posts:
@@ -50,9 +56,12 @@ for doi in dois:
     else:
         print(f'Failed to retrieve posts for DOI: {doi}')
 
+    #In case you want to limit the number of DOIs processed
     coounter += 1
+    """
     if coounter == 30:
         break
+    """
 
 #Save the collected data to a file
 save_to_file(doi_info, 'doi_data.json')
@@ -76,6 +85,32 @@ wordcloud = WordCloud(width=800, height=400, background_color='white').generate(
 plt.figure(figsize=(10, 5))
 plt.imshow(wordcloud, interpolation='bilinear')
 plt.axis('off')
-plt.show()
+#Not showing the plot in the new window to avoid blocking the script
+#plt.show()
 wordcloud.to_file('wordcloud.png')
 print('Word cloud saved as wordcloud.png.')
+
+# Create a bar chart for year-wise publication counts
+year_counts = {}
+for info in doi_info:
+    year = info.get('message', {}).get('created', {}).get('date-parts', [[]])[0][0]
+    if year:
+        year = str(year)
+        if year in year_counts:
+            year_counts[year] += 1
+        else:
+            year_counts[year] = 1
+
+# Sort the year counts
+sorted_year_counts = dict(sorted(year_counts.items()))
+# Create a bar chart
+plt.figure(figsize=(10, 5))
+plt.bar(sorted_year_counts.keys(), sorted_year_counts.values())
+plt.xlabel('Year')
+plt.ylabel('Publication Count')
+plt.title('Year-wise Publication Counts')
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.savefig('year_wise_publication_counts.png')
+#Not showing the plot in the new window to avoid blocking the script
+#plt.show()
