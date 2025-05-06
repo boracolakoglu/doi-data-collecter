@@ -30,7 +30,7 @@ pip install requests pandas wordcloud matplotlib
 2. Update the `doi_path` variable in the script with the name of your CSV file (e.g., `scopus.csv`).
 3. Run the script:
      ```bash
-     python script_name.py
+     python doi-data-collecter.py
      ```
 4. The script will:
      - Fetch metadata for each DOI.
