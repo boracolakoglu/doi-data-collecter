@@ -34,7 +34,7 @@ def save_to_file(data, filename):
         json.dump(data, file, indent=4)
 
 #get doi data from excel sheet
-doi_path = 'scopus.csv'
+doi_path = 'MasterData.csv'
 # Read the CSV file and extract DOIs
 # (Assuming the DOIs are in the first column)
 import pandas as pd
